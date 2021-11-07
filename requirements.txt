@@ -1,2 +1,5 @@
 Django==3.2.8  # https://www.djangoproject.com/
 djangorestframework==3.12.4  # https://github.com/encode/django-rest-framework
+mysqlclient==2.0.3
+channels==3.0.4 #https://pypi.org/project/channels/
+channels-redis==3.3.1 #https://pypi.org/project/channels-redis/

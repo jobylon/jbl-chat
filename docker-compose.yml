@@ -8,3 +8,29 @@ services:
       - .:/code
     ports:
       - "8000:8000"
+    depends_on: 
+      - db
+      - redis
+  db:
+    image: mariadb:10.6.0
+    restart: always
+    environment:
+      MARIADB_DATABASE: "${MYSQL_DATABASE}"
+      MARIADB_USER: "${MYSQL_USER}"
+      MARIADB_PASSWORD: "${MYSQL_PASSWORD}"
+      MARIADB_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    ports: 
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - ${MYSQL_HOST}:/var/lib/mysql
+  redis:
+    image: redis:alpine
+    command: redis-server
+    ports: 
+      - "${REDIS_PORT}:6379"
+    volumes: 
+      - ${REDIS_HOST}/redis-data:/var/lib/redis
+      - ${REDIS_HOST}/redis.conf:/usr/local/etc/redis/redis.conf
+    environment: 
+      - REDIS_REPLICATION_MODE=master
+    
