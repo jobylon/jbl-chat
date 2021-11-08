@@ -18,7 +18,7 @@ class Message(models.Model):
         ordering = ('send_at',)
 
     def __str__(self) -> str:
-        return f'Message send by {self.sended_by} and recieved by {self.recieved_by}'
+        return f'Message send by {self.sended_by} and recieved by {self.received_by}'
 
     def last_messages_room(self, room_name):
         Message.objects.filter(room=room_name).all()
@@ -27,7 +27,7 @@ class Message(models.Model):
         user_sender = User.objects.filter(username=user)[0]
         if user_sender is None:
             raise Exception(f'User {user} sender not exist')
-        return Message.objects.filter(Q(sended_by=user_sender) | Q(received_by=user_sender))
+        return Message.objects.filter(Q(sended_by=user_sender) | Q(received_by=user_sender)).all()
 
     def save_message(message, sender, receiver, room):
         user_sender = User.objects.filter(username=sender)[0]

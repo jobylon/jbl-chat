@@ -6,12 +6,33 @@
     <title>Chat Rooms</title>
 </head>
 <body>
-    What chat room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
-
+    <span>{{ username }}</span><br>
+    <form action="/chat/logout/" method="POST">
+        <input type="submit" class="button" name="logout" value="Log out">
+    </form>
+    
+    <h3>Char With a User</h3><br>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Users
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <ul id="chat-list-users">
+                        
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script>
-        const chatSocket = new WebSocket(
+        const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
             + '/ws/chat/'
@@ -20,22 +41,28 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             console.log(data)
+            const list = document.getElementById('chat-list-users')
+            list.innerHTML = ''
+            if(data.message.length == 0){
+                list.innerHTML = 'No others logged users'
+            }
+            for (let index = 0; index < data.message.length; index++) {
+                const username = data.message[index].username
+                let li = document.createElement("li")
+                let link = document.createElement('a')
+                var linkText = document.createTextNode(username)
+                link.appendChild(linkText)
+                link.title = username
+                link.href = "user/" + username
+                link.target = "_blank"
+                li.appendChild(link)
+                list.appendChild(li)
+                console.log(username)
+            }
         };
 
         chatSocket.onclose = function(e) {
             console.error(e);
-        };
-
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
-
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/chat/';
         };
     </script>
 </body>

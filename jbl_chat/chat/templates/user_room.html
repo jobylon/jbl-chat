@@ -7,17 +7,16 @@
 </head>
 <body>
     <textarea id="chat-log" cols="100" rows="20">
-    {% for message in content %}
-    {{message.message}}
-    {% endfor %}
+    
     </textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
     {{ user_room_name|json_script:"room-name" }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-        const chatSocket = new WebSocket(
+        const chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
             + '/ws/chat/user/'
