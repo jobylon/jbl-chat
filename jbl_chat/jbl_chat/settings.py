@@ -79,9 +79,9 @@ WSGI_APPLICATION = 'jbl_chat.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'jbl_chat',
-        'USER': 'jbl_chat_user',
-        'PASSWORD': 'jbl_chat_password',
+        'NAME': os.getenv('DB', 'jbl_chat'),
+        'USER': os.getenv('DB_USER', 'jbl_chat_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'jbl_chat_password'),
         'HOST': 'db',
         'PORT': '3306',
     }

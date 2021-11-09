@@ -8,6 +8,12 @@ services:
       - .:/code
     ports:
       - "8000:8000"
+    environment: 
+      DB: "${MYSQL_DATABASE}"
+      DB_USER: "${MYSQL_USER}"
+      DB_PASSWORD: "${MYSQL_PASSWORD}"
+      DB_PORT: ${MYSQL_PORT}
+      ENV: "${ENV}"
     depends_on: 
       - db
       - redis

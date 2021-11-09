@@ -37,7 +37,6 @@ class Message(models.Model):
         if user_receiver is None:
             raise Exception(f'User {receiver} receiver not exist')
 
-        print(user_sender)
         Message.objects.create(
             message=message, sended_by=user_sender, received_by=user_receiver, room=room)
 
