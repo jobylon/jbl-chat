@@ -1,13 +1,91 @@
-# jbl-chat
+# Chat app
 
-Let's set the stage, you're the founder of this new messaging startup and you're building your first product. You know it will change over time with feedback from the rest of the team and users; but you still need to start somewhere.
+This is a simple chat backend implemented as a RESTful API. It supports conversations between two or more users. The app uses basic HTTP authentication, and each request must be authenticated, or else a 401 error is returned.
 
-You're building the backend in Django and your first task is to expose an initial API. With this first release, you want to deliver the following stories.
+The following API endpoints are available:
 
-1. As a user, I want to see all the other users on the platform.
-2. As a user, I want to see my conversation with another user
-3. As a user, I want to be able to message another user on the platform.
+- `GET /chat/users` - list all users
+- `GET /chat/conversations` - list all conversations where the authenticated user is a participant
+- `POST /chat/conversations` - create a new conversation with the users specified in the request JSON
+- `GET /chat/conversation/{conv_id}/messages` - get all messages from the specified conversation
+- `POST /chat/converstaion/{conv_id}/messages` - post a new message to the specified conversation
 
-Since this is your startup and your product, that you are going to maintain and extend for some time; it's up to you to setup and use the practices that you think are important to you. And you can use any Python library that you want to use. You're the boss! ;-)
+## Example
 
-We've setup a Django skeleton project for you + setup Docker. Feel free to use Docker for dev or Python venv for your local development. You can use use any Python libraries you want to use. You do not need to setup any user registration or management, it's fine to create them on the shell and use session authentication for the API. We expect you to deliver your solution as a PR to our public repo.
+Let's assume we have three users: Alice (id 1), Bob (id 2) and Clive (id 3).
+
+If Alice wants to send a message to Bob, she must first create a conversation between them:
+
+```
+POST /chat/conversations
+{
+    "participants": [1, 2]
+}
+```
+
+This will return a new conversation:
+
+```
+{
+    "id": 15,
+    "participants": [1, 2]
+}
+```
+
+She can now send a message to the new conversation:
+
+```
+POST /chat/conversation/15/message
+{
+    "text": "Hello there Bob"
+}
+```
+
+And Bob can receive the messages from the conversation:
+
+```
+GET /chat/conversation/15/message
+```
+
+Response:
+
+```
+{
+    "sender": 1,
+    "timestamp": "2022-06-21T17:09:38.058221Z"
+    "text": "Hello there Bob",
+    "conversation": 15
+}
+```
+
+If Clive attempts to read (or send a message to) their conversation, he will receive an error:
+
+```
+GET /chat/conversation/15/message
+```
+
+Response:
+
+```
+{
+    "error": "conversation not found"
+}
+```
+
+If attempting to create a conversation that already exists (i.e. a conversation with the same users), a conflict error is returned:
+
+```
+POST /chat/conversations
+{
+    "participants": [1, 2]
+}
+```
+
+Response:
+
+```
+{
+    "error": "conversation already exists",
+    "conflicting_id": 15
+}
+```
