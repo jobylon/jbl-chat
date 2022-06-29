@@ -13,8 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework_nested import routers
+from chat.views import UserViewSet, MessageViewSet
 
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
+
+messages_router = routers.NestedSimpleRouter(router, r'users', lookup='user')
+messages_router.register(r'messages', MessageViewSet, basename='message')
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    path(r'', include(router.urls)),
+    path(r'', include(messages_router.urls)),
+    path('auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
