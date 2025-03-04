@@ -1,13 +1,17 @@
 # jbl-chat
 
-Let's set the stage, you're the founder of this new messaging startup and you're building your first product. You know it will change over time with feedback from the rest of the team and users; but you still need to start somewhere.
+Let's set the stage, you are the founder of this exciting new messaging startup, you are tasked with building the first version of a product that is aimed to evolve with feedback from the team and users.
 
-You're building the backend in Django and your first task is to expose an initial API. With this first release, you want to deliver the following stories.
+You're building the backend using Django, and your initial task is to expose a starting API while also leveraging HTMX for interactive front-end experiences. With this first release, we want to deliver the following user stories:
 
-1. As a user, I want to see all the other users on the platform.
-2. As a user, I want to see my conversation with another user
-3. As a user, I want to be able to message another user on the platform.
+1. As a user, I want to see all other users on the platform.
+2. As a user, I want to view my conversation with another user.
+3. As a user, I want to be able to send messages to another user on the platform.
 
-Since this is your startup and your product, that you are going to maintain and extend for some time; it's up to you to setup and use the practices that you think are important to you. And you can use any Python library that you want to use. You're the boss! ;-)
+Given that this is your startup, you have the freedom to set up and utilize the practices that align with your goals. You can use any Python libraries or external tools that you prefer.
 
-We've setup a Django skeleton project for you + setup Docker. Feel free to use Docker for dev or Python venv for your local development. You can use use any Python libraries you want to use. You do not need to setup any user registration or management, it's fine to create them on the shell and use session authentication for the API. We expect you to deliver your solution as a PR to our public repo.
+We have provided a Django skeleton project along with Docker setup for your convenience. Feel free to utilize Docker for development or Python virtual environments for your local setup. Since managing user registration isn’t required for this assessment, you can create dummy users directly using the shell and implement session authentication for the API.
+
+Incorporating HTMX will allow you to create dynamic, interactive elements on the front end without needing to reload the page. We encourage you to think about how HTMX can enhance user interactions effectively.
+
+Please submit your solution as a pull request to our public repository. Happy coding!
