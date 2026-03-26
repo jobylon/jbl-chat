@@ -1,17 +1,73 @@
 # jbl-chat
 
-Let's set the stage, you are the founder of this exciting new messaging startup, you are tasked with building the first version of a product that is aimed to evolve with feedback from the team and users.
+## Background
 
-You're building the backend using Django, and your initial task is to leverage HTMX for interactive front-end experiences. With this first release, we want to deliver the following user stories:
+Welcome to JBL Chat! This is the first version of our messaging platform, built by a previous developer. The following user stories have been implemented:
 
 1. As a user, I want to see all other users on the platform.
 2. As a user, I want to view my conversation with another user.
 3. As a user, I want to be able to send messages to another user on the platform.
 
-Given that this is your startup, you have the freedom to set up and utilize the practices that align with your goals. You can use any Python libraries or external tools that you prefer.
+The application is built with Django and uses HTMX for interactive front-end experiences.
 
-We have provided a Django skeleton project along with Docker setup for your convenience. Feel free to utilize Docker for development or Python virtual environments for your local setup. Since managing user registration isn’t required for this assessment, you can create dummy users directly using the shell and implement session authentication.
+## Your Task
 
-Incorporating HTMX will allow you to create dynamic, interactive elements on the front end without needing to reload the page. We encourage you to think about how HTMX can enhance user interactions effectively.
+We'd like you to **review and refactor** this codebase. The application works — all three user stories are functional — but the code quality needs significant improvement.
 
-Happy coding!
+Please review the code, identify the issues, and refactor it into something you would be proud to ship. Focus on software design principles, security, performance, and Django best practices.
+
+We'd like to see your thought process, so please document the issues you find and explain your reasoning for the changes you make.
+
+## Getting Started
+
+### Using Docker
+
+```bash
+docker compose up --build
+```
+
+### Using a virtual environment
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cd jbl_chat
+python manage.py migrate
+python manage.py seed_data
+python manage.py runserver
+```
+
+### Seed Data
+
+Run the seed command to create test users (alice, bob, charlie, diana) with sample messages:
+
+```bash
+python manage.py seed_data
+```
+
+You can log in as any user from the login page dropdown — no password is required.
+
+## Project Structure
+
+```
+jbl_chat/
+├── manage.py
+├── jbl_chat/          # Django project settings
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+└── chat/              # Chat application
+    ├── models.py
+    ├── views.py
+    ├── urls.py
+    ├── templates/
+    │   └── chat/
+    │       ├── base.html
+    │       ├── login.html
+    │       ├── user_list.html
+    │       └── conversation.html
+    └── management/
+        └── commands/
+            └── seed_data.py
+```

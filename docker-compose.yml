@@ -3,7 +3,7 @@ version: '3.7'
 services:
   web:
     build: .
-    command: python jbl_chat/manage.py runserver 0.0.0.0:8000
+    command: bash -c "python jbl_chat/manage.py migrate && python jbl_chat/manage.py seed_data && python jbl_chat/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:

@@ -1,0 +1,88 @@
+{% extends "chat/base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>JBL Chat</h1>
+    <div>
+        <span class="user-info">{{ current_user.username }} &rarr; {{ other_user.username }}</span>
+        <a href="/users/">Back to Users</a>
+    </div>
+</div>
+<div class="container">
+    <a href="/users/" class="back-link">&larr; All Conversations</a>
+
+    <div class="messages-container" id="messages-container">
+        {% for msg in messages %}
+        <div class="message {% if msg.is_mine %}message-mine{% else %}message-theirs{% endif %}">
+            <div class="message-header">
+                <strong>{{ msg.sender }}</strong>
+                <span class="timestamp">{{ msg.timestamp }}</span>
+            </div>
+            <div class="message-body">{{ msg.content }}</div>
+            <div class="message-status">{{ msg.status }}</div>
+        </div>
+        {% empty %}
+        <div class="no-results">No messages yet. Start the conversation!</div>
+        {% endfor %}
+    </div>
+
+    <form class="message-form" id="message-form">
+        {% csrf_token %}
+        <input type="text" name="content" placeholder="Type a message..." autocomplete="off" id="message-input">
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<script>
+    // Track the last message ID for polling
+    var lastMessageId = {{ last_message_id }};
+
+    var messagesContainer = document.getElementById('messages-container');
+    var messageForm = document.getElementById('message-form');
+    var messageInput = document.getElementById('message-input');
+
+    // Scroll to bottom on load
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // Send message
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var content = messageInput.value.trim();
+        if (!content) return;
+
+        var formData = new FormData();
+        formData.append('content', content);
+
+        fetch('/send-message/{{ other_user.id }}/', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                messagesContainer.insertAdjacentHTML('beforeend', data.html);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                messageInput.value = '';
+                if (data.message_id > lastMessageId) {
+                    lastMessageId = data.message_id;
+                }
+            }
+        });
+    });
+
+    // Poll for new messages every 3 seconds
+    setInterval(function() {
+        fetch('/poll-messages/{{ other_user.id }}/?last_id=' + lastMessageId)
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.html) {
+                    messagesContainer.insertAdjacentHTML('beforeend', data.html);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+                if (data.last_id > lastMessageId) {
+                    lastMessageId = data.last_id;
+                }
+            });
+    }, 3000);
+</script>
+{% endblock %}
