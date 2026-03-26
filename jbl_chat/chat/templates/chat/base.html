@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JBL Chat</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #075e54;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header .user-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 14px;
+        }
+
+        .user-card {
+            display: block;
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: background-color 0.15s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .user-card:hover {
+            background-color: #f5f5f5;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .user-email {
+            font-size: 13px;
+            color: #667781;
+        }
+
+        .unread-badge {
+            background-color: #25d366;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            float: right;
+            margin-top: 5px;
+        }
+
+        .messages-container {
+            background: #e5ddd5;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            max-width: 65%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            clear: both;
+            overflow: hidden;
+        }
+
+        .message-mine {
+            background-color: #dcf8c6;
+            float: right;
+        }
+
+        .message-theirs {
+            background-color: white;
+            float: left;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 4px;
+        }
+
+        .message-header strong {
+            font-size: 13px;
+            color: #075e54;
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: #667781;
+        }
+
+        .message-body {
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message-status {
+            font-size: 11px;
+            color: #667781;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .message-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-form input[type="text"] {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .message-form input[type="text"]:focus {
+            border-color: #075e54;
+        }
+
+        .message-form button {
+            padding: 10px 25px;
+            background-color: #075e54;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .message-form button:hover {
+            background-color: #064e46;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #075e54;
+        }
+
+        .login-form {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 400px;
+            margin: 80px auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: #075e54;
+        }
+
+        .login-form select,
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .login-form button {
+            background-color: #075e54;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-form button:hover {
+            background-color: #064e46;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #075e54;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #667781;
+        }
+
+        #search-results {
+            min-height: 0;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% extends "chat/base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>JBL Chat</h1>
+    <div>
+        <span class="user-info">Logged in as {{ current_user.username }}</span>
+        <a href="/login/">Switch User</a>
+    </div>
+</div>
+<div class="container">
+    <div class="search-box">
+        <input
+            type="text"
+            placeholder="Search users..."
+            id="search-input"
+            autocomplete="off"
+        >
+    </div>
+
+    <div id="search-results"></div>
+
+    <div id="user-list">
+        {% for user in users %}
+        <a href="/conversation/{{ user.id }}/" class="user-card">
+            <div class="user-name">
+                {{ user.username }}
+                {% if user.unread > 0 %}
+                <span class="unread-badge">{{ user.unread }}</span>
+                {% endif %}
+            </div>
+            <div class="user-email">{{ user.email }}</div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    var searchInput = document.getElementById('search-input');
+    var searchResults = document.getElementById('search-results');
+    var userList = document.getElementById('user-list');
+    var searchTimeout = null;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        var query = this.value.trim();
+
+        if (!query) {
+            searchResults.innerHTML = '';
+            userList.style.display = 'block';
+            return;
+        }
+
+        searchTimeout = setTimeout(function() {
+            fetch('/search-users/?q=' + encodeURIComponent(query))
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    searchResults.innerHTML = data.html;
+                    userList.style.display = 'none';
+                });
+        }, 300);
+    });
+</script>
+{% endblock %}
